@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On approche de l'Halloween - Semaine 7</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 100%);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Custom Animations */
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        @keyframes slideUpFade {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .animate-bounceIn { animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-wiggle:hover { animation: wiggle 0.5s ease-in-out infinite; }
+        .animate-slideUp { animation: slideUpFade 0.4s ease-out forwards; }
+
+        /* Card and Element Styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+            color: #1f2937;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to bottom, #f97316, #ea580c);
+            box-shadow: 0 4px 0 #c2410c, 0 10px 15px -3px rgba(234, 88, 12, 0.4);
+            transition: all 0.1s;
+        }
+        
+        .btn-primary:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 #c2410c, 0 0px 0px 0px rgba(234, 88, 12, 0.4);
+        }
+
+        .tab-btn {
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background-color: #f97316; /* Orange Tailwind */
+            color: white;
+            border-color: #ea580c;
+            transform: scale(1.1);
+            font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(234, 88, 12, 0.5);
+        }
+
+        /* Illustration wrapper for pedagogical aesthetic */
+        .illustration-container {
+            background: radial-gradient(circle, #fef3c7 0%, #fde68a 100%);
+            border: 4px solid #f59e0b;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.1), 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <main class="max-w-5xl mx-auto w-full h-full flex flex-col flex-1">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-5xl font-black text-orange-400 drop-shadow-md uppercase tracking-wider">
+                On approche de l'Halloween
+            </h1>
+            <h2 class="text-xl md:text-2xl font-bold text-purple-200 mt-2">
+                Semaine 7
+            </h2>
+        </header>
+
+        <!-- Main Card Section -->
+        <section class="glass-card flex-1 flex flex-col items-center justify-between p-6 md:p-10 relative z-10 w-full overflow-hidden">
+            
+            <!-- Illustration Area -->
+            <div id="illustration-box" class="illustration-container w-40 h-40 md:w-56 md:h-56 rounded-full flex items-center justify-center mb-6 text-7xl md:text-9xl animate-bounceIn select-none">
+                <!-- Emoji injected via JS -->
+            </div>
+
+            <!-- Joke Question Area -->
+            <div class="text-center w-full max-w-3xl mb-8">
+                <h3 id="question-text" class="text-2xl md:text-4xl font-bold text-indigo-950 leading-tight mb-6 whitespace-pre-line">
+                    <!-- Question injected via JS -->
+                </h3>
+
+                <!-- Reveal Button -->
+                <button id="btn-reveal" class="btn-primary text-white font-bold text-xl md:text-2xl py-3 px-8 rounded-full outline-none focus:ring-4 focus:ring-orange-300 animate-wiggle">
+                    Voir la réponse 👀
+                </button>
+
+                <!-- Joke Answer Area (STRICTLY HIDDEN BY DEFAULT) -->
+                <!-- The content is removed from DOM entirely when hidden to prevent leaks -->
+                <div id="answer-container" class="hidden mt-6 bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-6 shadow-inner">
+                    <p id="answer-text" class="text-2xl md:text-3xl font-black text-purple-700 leading-snug whitespace-pre-line">
+                        <!-- Answer injected securely via JS ONLY after click -->
+                    </p>
+                </div>
+            </div>
+
+            <!-- Navigation Prev/Next & Progress -->
+            <div class="w-full flex items-center justify-between border-t border-gray-200 pt-6 mt-auto">
+                <button id="btn-prev" class="flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    ◀ <span class="hidden md:inline ml-2">Précédente</span>
+                </button>
+                
+                <div id="progress-indicator" class="font-bold text-xl text-gray-500 bg-gray-100 px-6 py-2 rounded-full border border-gray-200">
+                    Blague 1 sur 15
+                </div>
+                
+                <button id="btn-next" class="flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="hidden md:inline mr-2">Suivante</span> ▶
+                </button>
+            </div>
+        </section>
+
+        <!-- Tabs Navigation -->
+        <nav class="mt-8 w-full">
+            <div id="tabs-container" class="flex flex-wrap justify-center gap-2 md:gap-3">
+                <!-- Tab buttons injected via JS -->
+            </div>
+        </nav>
+    </main>
+
+    <script>
+        // Data Structure for the Jokes
+        const jokes = [
+            { q: "Pourquoi les fantômes sont-ils de si mauvais menteurs ?", a: "Parce qu'on voit toujours à travers eux !", emoji: "👻" },
+            { q: "Pourquoi les squelettes sont-ils toujours calmes ?", a: "Parce que rien ne leur tape sur les nerfs !", emoji: "💀🧘" },
+            { q: "Quel est le sport préféré des sorcières ?", a: "Le sorcier-ball... joué sur un balai volant !", emoji: "🧙‍♀️🧹" },
+            { q: "Pourquoi les vampires ne boivent-ils pas de café ?", a: "Parce que ça les empêche de dormir le jour !", emoji: "🧛‍♂️☕" },
+            { q: "Que dit une maman fantôme à son enfant pour le coucher ?", a: "« Allez, va mettre ton drap-jama ! »", emoji: "👻🛏️" },
+            { q: "Quel est le repas préféré des vampires ?", a: "Les croque-monsieur !", emoji: "🧛‍♂️🥪" },
+            { q: "Pourquoi les fantômes aiment-ils autant l'école ?", a: "Parce qu'ils sont très forts en morts-matiques !", emoji: "👻🏫" },
+            { q: "Quel est le bonbon préféré des vampires ?", a: "Le chewin-gourmand au goût fraise-sanguines !", emoji: "🧛‍♂️🍬" },
+            { q: "Pourquoi la sorcière utilise-t-elle un balai plutôt qu'un aspirateur ?", a: "Parce que la rallonge électrique est trop courte dans les nuages !", emoji: "🧙‍♀️☁️" },
+            { q: "Quel est le fruit préféré des monstres au dessert ?", a: "La pample-frousse !", emoji: "👹🍊" },
+            { q: "Quel est le métier idéal pour un jeune vampire ?", a: "Dentiste, pour prendre soin de ses crocs !", emoji: "🧛‍♂️🦷" },
+            { q: "Que met un squelette sur ses frites ?", a: "De la mayon-os !", emoji: "💀🍟" },
+            { q: "Quel est l'animal le plus poli de la nuit d'Halloween ?", a: "Le vampire, car il dit toujours : « S'il vous sang ! »", emoji: "🧛‍♂️🎩" },
+            { q: "Pourquoi la sorcière ne porte-t-elle jamais de lunettes de soleil ?", a: "Parce qu'elles glissent le long de son nez crochu !", emoji: "🧙‍♀️🕶️" },
+            { q: "Quel est le jeu préféré des fantômes ?", a: "À cache-cache... parce qu'ils sont imbattables !", emoji: "👻🫣" },
+            { q: "— Toc toc !\n— Qui est là ?\n— Satan.\n— Satan qui ?", a: "— Ça attend trop longtemps à la porte, donne-moi des bonbons !", emoji: "🚪🎃" },
+            { q: "Un petit monstre dit à sa maman avant de sortir :\n— « Maman, je peux manger un bonbon ? »", a: "— « Seulement si tu t'es bien brossé les crocs et sali tes vêtements ! »", emoji: "👹🍬" }
+        ];
+
+        // Application State
+        let currentIndex = 0;
+        let isRevealed = false;
+
+        // DOM Elements
+        const questionText = document.getElementById('question-text');
+        const answerText = document.getElementById('answer-text');
+        const answerContainer = document.getElementById('answer-container');
+        const btnReveal = document.getElementById('btn-reveal');
+        const illustrationBox = document.getElementById('illustration-box');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const tabsContainer = document.getElementById('tabs-container');
+
+        // Simple Audio Synthesizer (No external files needed, robust and fast)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) initAudio();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            
+            if (type === 'reveal') {
+                // Humorous "Ta-da" / Boing sound
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(300, now);
+                oscillator.frequency.exponentialRampToValueAtTime(800, now + 0.3);
+                
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.5, now + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.5);
+            } else if (type === 'nav') {
+                // Short pop for navigation
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(400, now);
+                oscillator.frequency.exponentialRampToValueAtTime(200, now + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.1);
+            }
+        }
+
+        // Initialize Tabs
+        function createTabs() {
+            jokes.forEach((_, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'tab-btn w-10 h-10 md:w-12 md:h-12 rounded-xl bg-purple-800 text-purple-200 border-2 border-purple-600 flex items-center justify-center font-bold text-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-orange-400';
+                btn.innerText = index + 1;
+                btn.onclick = () => {
+                    playSound('nav');
+                    goToJoke(index);
+                };
+                tabsContainer.appendChild(btn);
+            });
+        }
+
+        function updateTabs() {
+            const tabs = tabsContainer.children;
+            for (let i = 0; i < tabs.length; i++) {
+                if (i === currentIndex) {
+                    tabs[i].classList.add('active');
+                } else {
+                    tabs[i].classList.remove('active');
+                }
+            }
+        }
+
+        // Render Joke (with STRICT ENFORCEMENT of hidden answers)
+        function renderJoke() {
+            // 1. Reset state securely
+            isRevealed = false;
+            
+            // 2. Clear out answer from DOM completely for maximum security
+            answerText.innerText = ""; 
+            answerContainer.classList.add('hidden');
+            answerContainer.classList.remove('animate-slideUp');
+            
+            // 3. Reset Button
+            btnReveal.classList.remove('hidden');
+            
+            // 4. Update Content
+            const currentJoke = jokes[currentIndex];
+            questionText.innerText = currentJoke.q;
+            
+            // 5. Update Illustration with re-triggering of animation
+            illustrationBox.innerText = currentJoke.emoji;
+            illustrationBox.classList.remove('animate-bounceIn');
+            void illustrationBox.offsetWidth; // Trigger reflow to restart animation
+            illustrationBox.classList.add('animate-bounceIn');
+            
+            // 6. Update Navigation UI
+            progressIndicator.innerText = `Blague ${currentIndex + 1} sur ${jokes.length}`;
+            btnPrev.disabled = currentIndex === 0;
+            btnNext.disabled = currentIndex === jokes.length - 1;
+            
+            updateTabs();
+        }
+
+        // Actions
+        function revealAnswer() {
+            if (isRevealed) return;
+            
+            // Explicit user action reveals the answer
+            initAudio(); // Ensure audio context is ready on user interaction
+            playSound('reveal');
+            
+            const currentJoke = jokes[currentIndex];
+            answerText.innerText = currentJoke.a; // Inject text ONLY now
+            
+            answerContainer.classList.remove('hidden');
+            answerContainer.classList.add('animate-slideUp');
+            btnReveal.classList.add('hidden'); // Hide the button once revealed
+            
+            isRevealed = true;
+        }
+
+        function nextJoke() {
+            if (currentIndex < jokes.length - 1) {
+                playSound('nav');
+                currentIndex++;
+                renderJoke();
+            }
+        }
+
+        function prevJoke() {
+            if (currentIndex > 0) {
+                playSound('nav');
+                currentIndex--;
+                renderJoke();
+            }
+        }
+
+        function goToJoke(index) {
+            if (index >= 0 && index < jokes.length) {
+                currentIndex = index;
+                renderJoke();
+            }
+        }
+
+        // Event Listeners
+        btnReveal.addEventListener('click', revealAnswer);
+        btnNext.addEventListener('click', nextJoke);
+        btnPrev.addEventListener('click', prevJoke);
+        
+        // Allow keyboard navigation for TNI/Smartboards
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextJoke();
+            } else if (e.key === 'ArrowLeft') {
+                prevJoke();
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                // Prevent space from scrolling if focused on body
+                if(document.activeElement === document.body) {
+                    e.preventDefault();
+                    if (!isRevealed) revealAnswer();
+                }
+            }
+        });
+
+        // Initialize App
+        createTabs();
+        renderJoke();
+
+    </script>
+</body>
+</html>
